@@ -6,11 +6,10 @@ import React, { useState } from 'react'
 type Props = {
     currentPage: number;
     pageCount: number;
-    pageChanged: (page:number) => void;
+    pageChanged: (page: number) => void;
 }
 
 export default function AppPagination({ currentPage, pageCount, pageChanged }: Props) {
-    
     return (
         <Pagination
             currentPage={currentPage}

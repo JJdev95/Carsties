@@ -1,6 +1,7 @@
 using AuctionService.Consumers;
 using AuctionService.Data;
 using MassTransit;
+using AuctionService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,8 @@ builder.Services.AddMassTransit(x =>
     });
 
     x.AddConsumersFromNamespaceContaining<AuctionCreatedFaultConsumer>();
+    x.AddConsumersFromNamespaceContaining<AuctioFinishedConsumer>();
+    x.AddConsumersFromNamespaceContaining<BidPlacedConsumer>();
 
     x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auction", false));
 
@@ -35,6 +38,14 @@ builder.Services.AddMassTransit(x =>
         {
             host.Username(builder.Configuration.GetValue("RabbitMq:Username", "guest"));
             host.Password(builder.Configuration.GetValue("RabbitMq:Password", "guest"));
+        });
+
+        cfg.ReceiveEndpoint("auction-bid-placed", e =>
+        {
+            e.UseMessageRetry(r => r.Interval(5, 5));
+
+            e.ConfigureConsumer<BidPlacedConsumer>(context);
+
         });
 
         cfg.ConfigureEndpoints(context);
@@ -50,6 +61,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters.NameClaimType = "username";
     });
 
+builder.Services.AddGrpc();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -57,6 +70,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGrpcService<GrpcAuctionService>();
 
 try
 {

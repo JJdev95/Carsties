@@ -3,17 +3,17 @@
 import React, { useEffect, useState } from 'react'
 import AuctionCard from './AuctionCard';
 import AppPagination from '../components/AppPagination';
-import { Auction, PagedResult } from '@/types';
 import { getData } from '../actions/auctionActions';
 import Filters from './Filters';
 import { shallow } from 'zustand/shallow';
 import { useParamsStore } from '@/hooks/useParamsStore';
 import qs from 'query-string';
 import EmptyFilter from '../components/EmptyFilter';
+import { useAuctionStore } from '@/hooks/useAuctionStore';
 
 
 export default function Listings() {
-  const [data, setData] = useState<PagedResult<Auction>>();
+  const [loading, setLoading] = useState(true);
   const params = useParamsStore(state => ({
     pageNumber: state.pageNumber,
     pageSize: state.pageSize,
@@ -23,6 +23,12 @@ export default function Listings() {
     seller: state.seller,
     winner: state.winner
   }), shallow);
+  const data = useAuctionStore(state => ({
+    auctions: state.auctions,
+    totalCount: state.totalCount,
+    pageCount: state.pageCount
+  }), shallow);
+  const setData = useAuctionStore(state => state.setData);
   const setParams = useParamsStore(state => state.setParams);
   const url = qs.stringifyUrl({ url: '', query: params });
 
@@ -33,7 +39,8 @@ export default function Listings() {
 
   useEffect(() => {
     getData(url).then(data => {
-      setData(data)
+      setData(data);
+      setLoading(false);
     })
   }, [url])
 
@@ -48,7 +55,7 @@ export default function Listings() {
       ) : (
         <>
           <div className='grid grid-cols-4 gap-6'>
-            {data.result.map((auction) => (
+            {data.auctions.map((auction) => (
               <AuctionCard auction={auction} key={auction.id} />
             ))}
           </div>
@@ -65,3 +72,7 @@ export default function Listings() {
 
   )
 }
+function userAuctionStore(arg0: (state: any) => { auctions: any; }) {
+  throw new Error('Function not implemented.');
+}
+

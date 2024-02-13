@@ -5,12 +5,6 @@ import { NextApiRequest } from "next";
 import { getToken } from "next-auth/jwt";
 
 export async function getSession() {
-    //some issues on my local pc, with secret  being null, this is just a temporary fix until i figure it out.
-    console.log('auth secret is ' + authOptions.secret);
-    if (!authOptions.secret) {
-        authOptions.secret = 'secret';
-    }
-
     return await getServerSession(authOptions);
 }
 

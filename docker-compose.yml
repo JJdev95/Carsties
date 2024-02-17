@@ -115,15 +115,15 @@ services:
       - rabbitmq
   web-app:
     image: josifoski22/web-app
-    build: 
-      context: .
-      dockerfile: frontend/web-app/Dockerfile
+    build:
+      context: ./frontend/web-app
+      dockerfile: Dockerfile
     volumes:
       - /var/lib/web/data
     ports:
       - 3000:3000
     environment:
-      - NEXTAUTH_SECRET=somethingreallysecret
+      - NEXTAUTH_SECRET=somethingreallyreallysecret
       - NEXTAUTH_URL=http://web-app
       - API_URL=http://gateway-svc/
       - ID_URL=http://identity-svc

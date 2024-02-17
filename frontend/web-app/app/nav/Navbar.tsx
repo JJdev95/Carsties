@@ -3,7 +3,7 @@ import Search from './Search'
 import Logo from './Logo'
 import LoginButton from './LoginButton'
 import { getCurrentUser } from '../actions/authActions'
-import UserActions from './userActions'
+import UserActions from './UserActions'
 
 export default async function Navbar() {
   const user = await getCurrentUser();

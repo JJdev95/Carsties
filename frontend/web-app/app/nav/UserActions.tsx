@@ -14,7 +14,7 @@ type Props = {
     user: User;
 }
 
-export default function userActions({user}: Props) {
+export default function UserActions({user}: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const setParams = useParamsStore(state => state.setParams);
